@@ -1,22 +1,19 @@
 +++
-title = "Pods"
-subtitle = "Kubernetes pods by example"
+title = "容器组"
+subtitle = "在实例中学习 Kubernetes 容器组"
 date = "2019-03-23"
 url = "/pods/"
 +++
 
-A pod is a collection of containers sharing a network and mount namespace
-and is the basic unit of deployment in Kubernetes. All containers in a pod
-are scheduled on the same node.
+容器组（Pod）是使用相同的网络、能挂载相同存储卷的一组容器，它是 Kubernetes 中的最基本部署单元。在容器组中的所有容器都会被调度到同一节点上。
 
-To launch a pod using the container [image](https://quay.io/repository/openshiftlabs/simpleservice/)
-`quay.io/openshiftlabs/simpleservice:0.5.0` and exposing a HTTP API on port `9876`, execute:
+执行下面的命令可以使用容器[镜像](https://quay.io/repository/openshiftlabs/simpleservice/) `quay.io/openshiftlabs/simpleservice:0.5.0` 启动一个容器组，并公开一个 `9876` 端口作为 HTTP 
 
 ```bash
 $ kubectl run sise --image=quay.io/openshiftlabs/simpleservice:0.5.0 --port=9876
 ```
 
-We can now see that the pod is running:
+现在，可以确保容器组已处于运行状态：
 
 ```bash
 $ kubectl get pods
@@ -27,24 +24,20 @@ $ kubectl describe pod sise-3210265840-k705b | grep IP:
 IP:                     172.17.0.3
 ```
 
-From within the cluster (e.g. via [`oc rsh`](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/developer-cli-commands.html#rsh)) this pod is accessible via the pod IP `172.17.0.3`,
-which we've learned from the `kubectl describe` command above:
+在执行上面的 `kubectl describe` 命令后，我们发现，在集群内部（比如，通过调用 [`oc rsh`](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/developer-cli-commands.html#rsh)），这一容器组可使用容器组 IP 地址 `172.17.0.3` 来访问：
 
 ```bash
 [cluster] $ curl 172.17.0.3:9876/info
 {"host": "172.17.0.3:9876", "version": "0.5.0", "from": "172.17.0.1"}
 ```
-
-Note that `kubectl run` creates a [deployment](/deployments/), so in order to
-get rid of the pod you have to execute `kubectl delete deployment sise`.
+请注意，`kubecctl run` 会创建一个[部署](/deployments/)。所以，如果想删除容器组，就需要执行 `kubectl delete deployment sise`。
 
 
-#### Using configuration file
+#### 使用配置文件
 
-You can also create a pod from a configuration file.
-In this case the [pod](https://github.com/openshift-evangelists/kbe/blob/master/specs/pods/pod.yaml) is
-running the already known `simpleservice` image from above along with
-a generic `CentOS` container:
+我们还可以用配置文件创建容器组。
+
+下面的例子里，[容器组](https://github.com/openshift-evangelists/kbe/blob/master/specs/pods/pod.yaml)中运行了一个从前面过程中用过的 `simpleservice` 镜像，以及一个常见的 `CentOS` 镜像：
 
 ```bash
 $ kubectl apply -f https://raw.githubusercontent.com/openshift-evangelists/kbe/master/specs/pods/pod.yaml
@@ -54,8 +47,7 @@ NAME                      READY     STATUS    RESTARTS   AGE
 twocontainers             2/2       Running   0          7s
 ```
 
-Now we can exec into the `CentOS` container and access the `simpleservice`
-on localhost:
+现在，我们可以连接进入 `CentOS` 容器，并以 localhost 的方式访问 `simpleservice`：
 
 ```bash
 $ kubectl exec twocontainers -c shell -i -t -- bash
@@ -63,9 +55,7 @@ $ kubectl exec twocontainers -c shell -i -t -- bash
 {"host": "localhost:9876", "version": "0.5.0", "from": "127.0.0.1"}
 ```
 
-Specify the `resources` field in the pod to influence how much CPU and/or RAM a
-container in a [pod](https://github.com/openshift-evangelists/kbe/blob/master/specs/pods/constraint-pod.yaml)
-can use (here: `64MB` of RAM and `0.5` CPUs):
+为[容器组](https://github.com/openshift-evangelists/kbe/blob/master/specs/pods/constraint-pod.yaml)指定 `resources` 字段来影响其中的容器可用的 CPU 及/或 内存资源：
 
 ```bash
 $ kubectl create -f https://raw.githubusercontent.com/openshift-evangelists/kbe/master/specs/pods/constraint-pod.yaml
@@ -84,10 +74,9 @@ Containers:
 ...
 ```
 
-Learn more about resource constraints in Kubernetes via the docs [here](https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-ram-container/)
-and [here](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/).
+可以在[此处](https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-ram-container/)和[此处](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/)的文档继续学习 Kubernetes 中的资源限制。
 
-To remove all the pods created, just run:
+如果要删除上面创建的容器组，只需执行：
 
 ```bash
 $ kubectl delete pod twocontainers
@@ -95,9 +84,6 @@ $ kubectl delete pod twocontainers
 $ kubectl delete pod constraintpod
 ```
 
-To sum up, launching one or more containers (together) in Kubernetes is simple,
-however doing it directly as shown above comes with a serious limitation: you have to
-manually take care of keeping them running in case of a failure. A better way
-to supervise pods is to use [deployments](/deployments), giving you much more control over the life cycle, including rolling out a new version.
+总之，在 Kubernetes 中（一同）启动一个或多个容器非常简单，但是从上面的演示可以看出直接启动容器组的做法有一个明显的缺陷：在出现失败时，我们需要手工确保它的运行状态。一个更好的方法，是使用[部署](/deployments)来管理容器组，这样能让我们对它的生命周期，包括部署版本等操作拥有更好的控制能力。
 
-[Next](/labels)
+[下一篇](/labels)
