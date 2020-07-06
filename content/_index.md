@@ -1,7 +1,7 @@
 这是一个实操型 Kubernetes 入门材料，请浏览下列示例：
 
 - [容器组](/pods/)
-- [标签](/labels/)
+- [标记](/labels/)
 - [部署](/deployments/)
 - [服务](/services/)
 - [服务发现](/sd/)

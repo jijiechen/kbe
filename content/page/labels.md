@@ -5,8 +5,9 @@ date = "2019-02-27"
 url = "/labels/"
 +++
 
-Labels are the mechanism you use to organize Kubernetes objects. A label is a key-value
-pair with certain [restrictions](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)
+标记是一种可用于组织 Kubernetes 对象的机制。标记是一种键值对，在长度和允许的值方面需要遵循一些[限制](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)，不过标记的含义并没有预先的定义。因而，我们可以根据需要使用标记
+
+
 concerning length and allowed values but without any pre-defined meaning.
 So you're free to choose labels as you see fit, for example, to express
 environments such as 'this pod is running in production' or ownership,
@@ -91,4 +92,4 @@ $ kubectl delete pods labelexother
 Note that labels are not restricted to pods. In fact you can apply them to
 all sorts of objects, such as nodes or services.
 
-[Previous](/pods) | [Next](/deployments)
+[上一页](/pods) | [下一页](/deployments)
